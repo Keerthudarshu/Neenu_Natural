@@ -1,11 +1,11 @@
 modules = ["nodejs-20", "web"]
-run = "npm run serve"
+run = "npm start"
 
 [nix]
 channel = "stable-25_05"
 
 [deployment]
-run = ["sh", "-c", "npm run serve"]
+run = ["sh", "-c", "npm start"]
 
 [[ports]]
 localPort = 4028
@@ -16,7 +16,7 @@ localPort = 4173
 externalPort = 80
 
 [workflows]
-runButton = "Run App"
+runButton = "Start Development Server"
 
 [[workflows.workflow]]
 name = "Run"
@@ -35,3 +35,12 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run start"
+
+[[workflows.workflow]]
+name = "Start Development Server"
+author = 46893987
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm start"

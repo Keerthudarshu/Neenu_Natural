@@ -7,8 +7,10 @@ import BestsellersCarousel from './components/BestsellersCarousel';
 import NewsletterSection from './components/NewsletterSection';
 import Footer from './components/Footer';
 
+import { useCart } from '../../contexts/CartContext';
+
 const Homepage = () => {
-  const [cartItems, setCartItems] = useState([]);
+  const { addToCart, getCartItemCount, cartItems } = useCart();
   const [searchQuery, setSearchQuery] = useState('');
 
   // Mock cart data for demonstration
@@ -31,22 +33,25 @@ const Homepage = () => {
         quantity: 1
       }
     ];
-    setCartItems(mockCartItems);
+    // The original code had setCartItems(mockCartItems) here which would be incorrect if CartContext doesn't manage initial state this way.
+    // Assuming addToCart handles adding items and the context maintains the state.
+    // If initial cart state is needed, it should be handled within CartContext.
   }, []);
 
   const handleAddToCart = (product) => {
-    setCartItems(prevItems => {
-      const existingItem = prevItems?.find(item => item?.id === product?.id);
-      if (existingItem) {
-        return prevItems?.map(item =>
-          item?.id === product?.id
-            ? { ...item, quantity: item?.quantity + 1 }
-            : item
-        );
-      } else {
-        return [...prevItems, { ...product, quantity: 1 }];
-      }
-    });
+    const cartItem = {
+      id: `${product.id}-default`,
+      productId: product.id,
+      name: product.name,
+      price: product.salePrice || product.price,
+      originalPrice: product.originalPrice || product.price,
+      image: product.image,
+      variant: 'Default',
+      category: product.category,
+      brand: product.brand
+    };
+    addToCart(cartItem, 1);
+    console.log('Added to cart:', cartItem);
   };
 
   const handleSearch = (query) => {
@@ -55,15 +60,13 @@ const Homepage = () => {
     window.location.href = `/product-collection-grid?search=${encodeURIComponent(query)}`;
   };
 
-  const cartItemCount = cartItems?.reduce((total, item) => total + item?.quantity, 0);
-
   return (
     <>
       <Helmet>
         <title>Neenu's Natural - Premium Natural & Handmade Food Products</title>
-        <meta 
-          name="description" 
-          content="Discover authentic Indian flavors with Neenu's Natural premium handmade food products. From traditional sweets to organic spices, experience pure natural taste with free shipping on orders above ₹499." 
+        <meta
+          name="description"
+          content="Discover authentic Indian flavors with Neenu's Natural premium handmade food products. From traditional sweets to organic spices, experience pure natural taste with free shipping on orders above ₹499."
         />
         <meta name="keywords" content="natural food products, handmade sweets, organic spices, traditional pickles, pure ghee, Indian food, authentic flavors, chemical-free, preservative-free" />
         <meta property="og:title" content="Neenu's Natural - Premium Natural & Handmade Food Products" />
@@ -79,7 +82,7 @@ const Homepage = () => {
       <div className="min-h-screen bg-background">
         {/* Header */}
         <Header
-          cartItemCount={cartItemCount}
+          cartItemCount={getCartItemCount()}
           isLoggedIn={false}
           onSearch={handleSearch}
           cartItems={cartItems}

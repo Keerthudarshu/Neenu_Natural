@@ -6,9 +6,9 @@ import Input from './Input';
 import AnnouncementBar from './AnnouncementBar';
 import MegaMenu from './MegaMenu';
 import CartDrawer from './CartDrawer';
-import { useCart } from '../contexts/CartContext.jsx';
+import { useCart } from '../../contexts/CartContext.jsx';
 const Header = ({ isLoggedIn = false, onSearch = () => {} }) => {
-  const { cartItems, getCartItemCount } = useCart();
+  const { cartItems, getCartItemCount, updateQuantity, removeFromCart } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
@@ -242,14 +242,8 @@ const Header = ({ isLoggedIn = false, onSearch = () => {} }) => {
         isOpen={isCartDrawerOpen}
         onClose={() => setIsCartDrawerOpen(false)}
         cartItems={cartItems}
-        onUpdateQuantity={(id, quantity) => {
-          // Handle quantity update
-          console.log('Update quantity:', id, quantity);
-        }}
-        onRemoveItem={(id) => {
-          // Handle item removal
-          console.log('Remove item:', id);
-        }}
+        onUpdateQuantity={updateQuantity}
+        onRemoveItem={removeFromCart}
       />
     </>
   );
